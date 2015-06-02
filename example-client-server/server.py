@@ -1,4 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# encoding: utf-8
+
 import socket
 
 s = socket.socket()
