@@ -43,7 +43,7 @@ def esperar_clientes():
 		print 'Got connection from', addr[num_clients]
 		num_clients+=1
 		for com in c:
-			com.send("Valeu negao")
+			com.send(str(num_clients))
 			pass
 		pass
 
