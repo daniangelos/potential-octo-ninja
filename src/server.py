@@ -4,6 +4,9 @@
 import socket
 import sys
 import threading
+import json
+import time
+import struct
 
 # Variaveis globais
 c = [ ]
@@ -40,10 +43,12 @@ def esperar_clientes():
 		c_aux, addr_aux = s.accept()
 		c.append(c_aux)
 		addr.append(addr_aux)
-		print 'Got connection from', addr[num_clients]
+		#print 'Got connection from', addr[num_clients]
 		num_clients+=1
 		for com in c:
-			com.send(str(num_clients))
+			data = {'QTD_CLIENTES': num_clients,'SEU_ID': num_clients-1}
+			data_string = json.dumps(data)
+			com.send(data_string)
 			pass
 		pass
 
@@ -53,7 +58,16 @@ def receber_dados():
 	global num_clients
 	global c
 	global addr
+	data = b''
 	while True:
+		for com in c:
+			sz_buf = com.recv(4)
+			size = struct.unpack("@i", sz_buf)[0]
+			data = com.recv(size)
+			if data == b'': continue
+			data_loaded = json.loads(data)
+			print data_loaded 
+			#print "\n"
 		pass
 
 # FIM receber_dados
