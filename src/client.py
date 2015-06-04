@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# encoding: utf-8
 
 import socket
 import sys
@@ -18,7 +17,7 @@ port = 12345
 
 def main():
 	global destino
-	destino = sys.argv[1]
+        destino = 2
 	thr1 = threading.Thread(target = receber)
 	thr2 = threading.Thread(target = enviar)
 
@@ -41,7 +40,9 @@ def receber():
 	while True:
 		data = str(s.recv(1024))
 		data_loaded = json.loads(data)
-		print str(data_loaded)
+                print '{QTD_CLIENTES: %s, SEU_ID: %s}' %(
+                        data_loaded['QTD_CLIENTES'],
+                        data_loaded['SEU_ID'])
 		pass
 	pass
 

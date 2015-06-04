@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# encoding: utf-8
 
 import socket
 import sys
@@ -66,7 +65,10 @@ def receber_dados():
 			data = com.recv(size)
 			if data == b'': continue
 			data_loaded = json.loads(data)
-			print data_loaded 
+                        print '{source: %s, dest: %s, payload: %s}' %(
+                                data_loaded['source'],
+                                data_loaded['dest'],
+                                data_loaded['payload'])
 			#print "\n"
 		pass
 
