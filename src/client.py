@@ -36,11 +36,11 @@ def main():
 def receber():
 	global num_clients
 	global my_id
-	
+
 	while True:
 		data = str(s.recv(1024))
 		data_loaded = json.loads(data)
-                print '{QTD_CLIENTES: %s, SEU_ID: %s}' %(
+                print '{QTD_CLIENTES: u\'%s\', SEU_ID: u\'%s\'}' %(
                         data_loaded['QTD_CLIENTES'],
                         data_loaded['SEU_ID'])
 		pass
@@ -56,9 +56,9 @@ def enviar():
 		data_string = json.dumps(data) # serialize data para mandar por socket
 		n = len(data_string)
 		sz_buf = struct.pack("@i", n)
-		
+
 		time.sleep(0.5)
-		
+
 		s.send(sz_buf)
 		s.send(data_string)
 		# todo: gerar payload de envio

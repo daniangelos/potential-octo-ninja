@@ -65,7 +65,7 @@ def receber_dados():
 			data = com.recv(size)
 			if data == b'': continue
 			data_loaded = json.loads(data)
-                        print '{source: %s, dest: %s, payload: %s}' %(
+                        print '{source: u\'%s\', dest: u\'%s\', payload: u\'%s\'}' %(
                                 data_loaded['source'],
                                 data_loaded['dest'],
                                 data_loaded['payload'])
