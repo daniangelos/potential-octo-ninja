@@ -10,7 +10,7 @@ import struct
 from Queue import Queue
 
 # Variaveis globais
-client_list = [ ]
+client_list = [ ] # Lista de tuplas, do tipo (status, cliente). Status diz se o cliente ainda está vivo
 addr = [ ]
 num_clients=0
 
@@ -58,11 +58,11 @@ def esperar_clientes():
 
     while True:
         c_aux, addr_aux = s.accept()
-        client_list.append( (True, c_aux) )
+        client_list.append( (True, c_aux) ) # True diz que o cliente ainda está vivo
         addr.append(addr_aux)
 
         num_clients+=1
-        id_buf = struct.pack("@i", (num_clients - 1))
+        id_buf = struct.pack("@i", (num_clients - 1)) #Codifica o ID do cliente para mandar pelo socket
         c_aux.send(id_buf)
 
 
@@ -77,7 +77,7 @@ def receber_dados():
     while True:
         for client_pair in client_list:
             (client_online, com) = client_pair
-            if client_online:
+            if client_online:   # Este IF e os Try/catch são tolerancia a falhas, caso o cliente caia
 
                 try:
                     sz_buf = com.recv(4)
@@ -116,11 +116,11 @@ def enviar_dados():
         data = json.dumps(data_loaded)
         dest = int(data_loaded['dest'])
 
-        if len(client_list) > dest:
+        if len(client_list) > dest: # Dropa o pacote se o cliente nao existir
             client_pair = client_list[dest]
             client_online, client = client_pair
 
-            if client_online:
+            if client_online: # Este IF e os Try/catch são tolerancia a falhas, caso o cliente caia
                 print "Enviando para: " + str(dest)
                 n = len(data)
                 sz_buf = struct.pack("@i", n)  # converte N em 4 bytes, para enviar pelo socket
