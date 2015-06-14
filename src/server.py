@@ -75,15 +75,32 @@ def receber_dados():
     global to_send
     data = b''
     while True:
-        for (status, com) in client_list:
-            if status:
-                sz_buf = com.recv(4)
+        for client_pair in client_list:
+            (client_online, com) = client_pair
+            if client_online:
+
+                try:
+                    sz_buf = com.recv(4)
+                except socket.error:
+                    client_pair[0] = False
+                    continue
+
                 size = 0
-                size = struct.unpack("@i", sz_buf)[0]
+
+                try:
+                    size = struct.unpack("@i", sz_buf)[0]
+                except struct.error as msg:
+                    continue
+
                 if size == 0:
                     continue
 
-                data = com.recv(size)
+                try:
+                    data = com.recv(size)
+                except socket.error:
+                    client_pair[0]= False
+                    continue
+
                 if data == b'':
                     continue
                 data_loaded = json.loads(data)
@@ -99,16 +116,24 @@ def enviar_dados():
         data = json.dumps(data_loaded)
         dest = int(data_loaded['dest'])
 
-        print "Enviando para: " + str(dest)
         if len(client_list) > dest:
-            n = len(data)
-            sz_buf = struct.pack("@i", n)  # converte N em 4 bytes, para enviar pelo socket
+            client_pair = client_list[dest]
+            client_online, client = client_pair
 
-            status, client = client_list[dest]
-            if status:
-                client.send(sz_buf) # envia o tamanho do dado antes
-                client.send(data)
+            if client_online:
+                print "Enviando para: " + str(dest)
+                n = len(data)
+                sz_buf = struct.pack("@i", n)  # converte N em 4 bytes, para enviar pelo socket
+
+                try:
+                    client.send(sz_buf) # envia o tamanho do dado antes
+                    client.send(data)
+                except socket.error:
+                    client_pair[0]= False
+                    continue
+
         to_send.task_done()
+# FIM enviar_dados
 
 
 if __name__ == "__main__":
