@@ -1,5 +1,4 @@
 Lista de tarefas a fazer
 ========================
 
-- Adicionar controle de falha de sockets em clientes e servidor
 - Adicionar mutex para controle de variáveis globais
