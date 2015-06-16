@@ -7,7 +7,8 @@ import threading
 import json
 import time
 import struct
-from bitstring import BitArray
+from random import randint
+from random import uniform
 from Queue import Queue
 
 # Variaveis globais
@@ -51,18 +52,6 @@ def main():
 		return
 
 # FIM DA MAIN
-def int_to_bit(n):
-	return [1 if digit == '1' else 0 for digit in bin(n)[2:]]
-#FIM int_to_bit
-def bit_to_int(bitfield):
-	total = 0
-	i = 0
-	for number in reversed(bitfield):
-		if(number == 1):
-			total += 2**i
-		i+=1
-	return total
-#FIM bit_to_int	
 def esperar_clientes():
 	global num_clients
 	global client_list
@@ -87,7 +76,22 @@ def extend(bitfield):
 			extenso.insert(0,0)
 			i+=1
 	return extenso
-
+#FIM extend
+def cagar_paleatorio(bitfield,porcentagem):
+	cagado = bitfield
+	i=0
+	lista = []
+	sorteio = randint(0,len(cagado)-1)
+	lista.append(sorteio)
+	cagado[sorteio] = not cagado[sorteio]
+	numero = len(cagado)*porcentagem
+	while(i<numero-1):
+		while(sorteio in lista):
+			sorteio = randint(0,len(cagado)-1)
+		lista.append(sorteio)
+		cagado[sorteio] = not cagado[sorteio]
+		i+=1
+	return cagado
 def cagar_pares(bitfield):
 	cagado = bitfield
 	i=0
@@ -96,8 +100,7 @@ def cagar_pares(bitfield):
 			cagado[i] = not cagado[i]
 		i+=1
 	return cagado
-#end cagar_pares
-
+#FIM cagar_pares
 def cagar_impares(bitfield):
 	cagado = bitfield
 	i=0
@@ -106,8 +109,19 @@ def cagar_impares(bitfield):
 			cagado[i] = not cagado[i]
 		i+=1
 	return cagado
-#end cagar_impares
-
+#FIM cagar_impares
+def int_to_bit(n):
+	return [1 if digit == '1' else 0 for digit in bin(n)[2:]]
+#FIM int_to_bit
+def bit_to_int(bitfield):
+	total = 0
+	i = 0
+	for number in reversed(bitfield):
+		if(number == 1):
+			total += 2**i
+		i+=1
+	return total
+#FIM bit_to_int	
 def receber_dados():
 	global num_clients
 	global client_list
@@ -143,13 +157,17 @@ def receber_dados():
 
 				if data == b'':
 					continue
-				data_loaded = json.loads(data)
-				vetor_bits = int_to_bit(data_loaded['payload'])
-				vetor_bits = extend(vetor_bits)
-				print vetor_bits
-				vetor_bits = cagar_pares(vetor_bits)
-				print vetor_bits
-				data_loaded['payload'] = bit_to_int(vetor_bits)
+				data_loaded = json.loads(data) #De-serializa o data recebido
+				vetor_bits = int_to_bit(data_loaded['payload']) #Passa o inteiro da mensagem para bitfield
+				vetor_bits = extend(vetor_bits) #Extende o bitfield para 32bits
+				#como usar o flip de pares
+				#vetor_bits = cagar_pares(vetor_bits)
+				#como usar o flip de impares
+				#vetor_bits = cagar_impares(vetor_bits)
+				#como usar o de porcentagem aleatoria
+				#porcentagem = random.uniform(0,1)
+				#vetor_bits = cagar_paleatorio(vetor_bits,porcentagem)
+				data_loaded['payload'] = bit_to_int(vetor_bits) #Passa o bitfield para inteiro
 				to_send.put(data_loaded)    # Coloca o dado recebido em uma fila sincrona de dados para serem enviados
 
 # FIM receber_dados

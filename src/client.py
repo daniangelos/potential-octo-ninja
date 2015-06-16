@@ -10,6 +10,7 @@ from random import randint
 import json
 import struct
 import time
+from modulo_assinatura import generate_md5
 
 num_clients = 0
 my_id = int()
@@ -87,7 +88,7 @@ def receber():
         if data == b'':
             continue
         data_loaded = json.loads(data)
-        print "Recebido de: " + str(data_loaded['source']) + " : " + str(data_loaded['payload'])
+        print "Recebido de: " + str(data_loaded['source']) + " : " + str(data_loaded['payload']) + " : " + str(data_loaded['check'])
 
 # FIM receber()
 def enviar():
@@ -95,7 +96,8 @@ def enviar():
     global destino
     i = 0
     while True:
-        data = {'source': my_id, 'dest': destino, 'payload': i}
+	check = str(generate_md5(i))
+        data = {'source': my_id, 'dest': destino, 'payload': i, 'check' : check}
         data_string = json.dumps(data) # serialize data para mandar por socket
         n = len(data_string)
         sz_buf = struct.pack("@i", n)  # converte N em 4 bytes, para enviar pelo socket
