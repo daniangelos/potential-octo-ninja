@@ -11,10 +11,12 @@ import json
 import struct
 import time
 from modulo_assinatura import generate_md5
+from modulo_assinatura import generate_sha1
 
 num_clients = 0
 my_id = int()
 destino = int()
+cript = int()
 
 s = socket.socket()
 host = socket.gethostname()
@@ -27,6 +29,7 @@ def handle_usage():
 
     parser = optparse.OptionParser(usage)
     parser.add_option('-m', dest='max', type='int', help='Número máximo de clientes, deve ser maior que zero.')
+    parser.add_option('-e', dest='_cript',type='int',help='Tipo de encriptacao.')
 
     return parser
 
@@ -48,6 +51,8 @@ def main():
 
     global destino
     destino = randint(0, options.max - 1)
+    global cript
+    cript = options._cript
     thr1 = threading.Thread(target = receber)
     thr2 = threading.Thread(target = enviar)
 
@@ -88,7 +93,7 @@ def receber():
         if data == b'':
             continue
         data_loaded = json.loads(data)
-        print "Recebido de: " + str(data_loaded['source']) + " : " + str(data_loaded['payload']) + " : " + str(data_loaded['check'])
+        print "Recebido de: " + str(data_loaded['source']) + " : " + str(data_loaded['msg']) + " : " + str(data_loaded['check'])
 
 # FIM receber()
 def enviar():
@@ -96,8 +101,11 @@ def enviar():
     global destino
     i = 0
     while True:
-	check = str(generate_md5(i))
-        data = {'source': my_id, 'dest': destino, 'payload': i, 'check' : check}
+        if(cript==0):#SHA1
+            check = str(generate_sha1(i))
+        elif(cript==1):#MD5
+            check = str(generate_md5(i))
+        data = {'source': my_id, 'dest': destino, 'msg': i, 'check' : check}
         data_string = json.dumps(data) # serialize data para mandar por socket
         n = len(data_string)
         sz_buf = struct.pack("@i", n)  # converte N em 4 bytes, para enviar pelo socket

@@ -68,15 +68,6 @@ def esperar_clientes():
 
 
 # FIM esperar_clientes
-def extend(bitfield):
-	extenso = bitfield
-	if(len(extenso)<32):
-		i = len(extenso)
-		while(i<32):
-			extenso.insert(0,0)
-			i+=1
-	return extenso
-#FIM extend
 def cagar_paleatorio(bitfield,porcentagem):
 	cagado = bitfield
 	i=0
@@ -110,10 +101,26 @@ def cagar_impares(bitfield):
 		i+=1
 	return cagado
 #FIM cagar_impares
+def bit32_to_chr(bitfield):
+	pass
+#FIM bit32_to_chr
+def string_to_bit32(checksum):
+	aux = checksum
+	lista_bits = []
+	for elemento in aux:
+		elemento = ord(elemento)
+		bitfield = int_to_bit32(elemento)
+		lista_bits.append(bitfield)
+	return lista_bits
+def int_to_bit32(n):
+	aux = int_to_bit(n)
+	aux = extend(aux)
+	return aux
+#FIM int_to_32bit
 def int_to_bit(n):
 	return [1 if digit == '1' else 0 for digit in bin(n)[2:]]
 #FIM int_to_bit
-def bit_to_int(bitfield):
+def bit32_to_int(bitfield):
 	total = 0
 	i = 0
 	for number in reversed(bitfield):
@@ -122,6 +129,15 @@ def bit_to_int(bitfield):
 		i+=1
 	return total
 #FIM bit_to_int	
+def extend(bitfield):
+	extenso = bitfield
+	if(len(extenso)<32):
+		i = len(extenso)
+		while(i<32):
+			extenso.insert(0,0)
+			i+=1
+	return extenso
+#FIM extend
 def receber_dados():
 	global num_clients
 	global client_list
@@ -158,16 +174,19 @@ def receber_dados():
 				if data == b'':
 					continue
 				data_loaded = json.loads(data) #De-serializa o data recebido
-				vetor_bits = int_to_bit(data_loaded['payload']) #Passa o inteiro da mensagem para bitfield
-				vetor_bits = extend(vetor_bits) #Extende o bitfield para 32bits
+				bitfield_msg = int_to_bit32(data_loaded['msg']) #Passa o inteiro da mensagem para bitfield
+				vetor_bits_check = string_to_bit32(data_loaded['check']) #Passa o checksum para bitfield
 				#como usar o flip de pares
-				#vetor_bits = cagar_pares(vetor_bits)
+				bitfield_msg = cagar_pares(bitfield_msg)
+				for bitfield in vetor_bits_check:
+					bitfield = cagar_pares(bitfield)
 				#como usar o flip de impares
 				#vetor_bits = cagar_impares(vetor_bits)
 				#como usar o de porcentagem aleatoria
 				#porcentagem = random.uniform(0,1)
 				#vetor_bits = cagar_paleatorio(vetor_bits,porcentagem)
-				data_loaded['payload'] = bit_to_int(vetor_bits) #Passa o bitfield para inteiro
+				print vetor_bits_check
+				data_loaded['msg'] = bit32_to_int(bitfield_msg) #Passa o bitfield para inteiro
 				to_send.put(data_loaded)    # Coloca o dado recebido em uma fila sincrona de dados para serem enviados
 
 # FIM receber_dados
