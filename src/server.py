@@ -7,6 +7,8 @@ import threading
 import json
 import time
 import struct
+import optparse
+import random
 from random import randint
 from random import uniform
 from Queue import Queue
@@ -15,6 +17,7 @@ from Queue import Queue
 client_list = [ ] # Lista de tuplas, do tipo (status, cliente). Status diz se o cliente ainda está vivo
 addr = [ ]
 num_clients=0
+cagar = int()
 
 # Fila síncrona de dados a serem enviados
 to_send = Queue()
@@ -24,7 +27,31 @@ s = socket.socket()
 host = socket.gethostname()
 port = 12345
 
+def handle_usage():
+    """ Função para gerenciar uso do programa e passagem do argumentos através da linha de comando.  """
+
+    usage = '''Se vira.'''
+
+    parser = optparse.OptionParser(usage)
+    # 0: nao cagar, 1: cagar aleatorio, 2: cagar pares, 3: cagar impares
+    parser.add_option('-c', dest='_cagar',type='int',help='Tipo de cagacao.')
+
+    return parser
+
 def main():
+    
+        # Recebe os argumentos por linha de comando
+        parser = handle_usage()
+        (options, args) = parser.parse_args()
+
+        #if options.max <= 0:
+            #print parser.usage
+            #return
+
+        global cagar 
+        cagar = options._cagar
+        
+
 	thr1 = threading.Thread(target = esperar_clientes)
 	thr2 = threading.Thread(target = receber_dados)
 	thr3 = threading.Thread(target = enviar_dados)
@@ -181,23 +208,28 @@ def receber_dados():
 				data_loaded = json.loads(data) #De-serializa o data recebido
 				bitfield_msg = int_to_bit32(data_loaded['msg']) #Passa o inteiro da mensagem para bitfield
 				vetor_bits_check = string_to_bit32(data_loaded['check']) #Passa o checksum para bitfield
-				#como usar o flip de pares
-				#bitfield_msg = cagar_pares(bitfield_msg)
-				#for bitfield in vetor_bits_check:
-					#bitfield = cagar_pares(bitfield)
-				#como usar o flip de impares
-				#bitfield_msg = cagar_impares(bitfield_msg)
-				#for bitfield in vetor_bits_check:
-					#bitfield = cagar_impares(bitfield)
-				#como usar o de porcentagem aleatoria
-				#porcentagem = random.uniform(0,1)
-				#bitfield_msg = cagar_paleatorio(bitfield_msg,porcentagem)
-				#for bitfield in vetor_bits_check:
-					#bitfield = cagar_paleatorio(bitfield,0.3)
-				data_loaded['msg'] = bit32_to_int(bitfield_msg) #Passa o bitfield para inteiro
-				data_loaded['check'] = bit32_to_string(vetor_bits_check)
-				to_send.put(data_loaded)    # Coloca o dado recebido em uma fila sincrona de dados para serem enviados
+                                if cagar == 1:
+                                    #como usar o de porcentagem aleatoria
+                                    porcentagem = random.uniform(0,1)
+                                    bitfield_msg = cagar_paleatorio(bitfield_msg,porcentagem)
+                                    for bitfield in vetor_bits_check:
+                                            bitfield = cagar_paleatorio(bitfield,0.3)
+                                elif cagar == 2:
+                                    #como usar o flip de pares
+                                    bitfield_msg = cagar_pares(bitfield_msg)
+                                    for bitfield in vetor_bits_check:
+                                            bitfield = cagar_pares(bitfield)
+                                elif cagar == 3:
+                                    #como usar o flip de impares
+                                    bitfield_msg = cagar_impares(bitfield_msg)
+                                    for bitfield in vetor_bits_check:
+                                            bitfield = cagar_impares(bitfield)
 
+                                #Passa o bitfield para inteiro
+				data_loaded['msg'] = bit32_to_int(bitfield_msg)	
+                                data_loaded['check'] = bit32_to_string(vetor_bits_check)
+                                # Coloca o dado recebido em uma fila sincrona de dados para serem enviados
+				to_send.put(data_loaded)    
 # FIM receber_dados
 
 

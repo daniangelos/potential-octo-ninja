@@ -106,7 +106,8 @@ def receber():
             print "Recebido de: " + str(data_loaded['source']) + \
                 " : " + str(data_loaded['msg']) + " : " + str(data_loaded['check'])
         else:
-            print "Mensagem recebida com erro"
+            #print "Mensagem recebida com erro"
+            pass
 
 
 
