@@ -2,5 +2,6 @@ Lista de tarefas a fazer
 ========================
 - Fazer "SWITCH/CASE" da maneira de flipar os bits
 - Fazer CRC e HAMMING
-- Fazer checagem de checksum, tem algo errado com a serialização do checksum
+- Fazer checagem de checksum
+- Procurar um jeito melhor de transformar as coisas para bits, checar bitarray
 - Adicionar mutex para controle de variáveis globais

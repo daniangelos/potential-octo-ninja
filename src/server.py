@@ -101,15 +101,20 @@ def cagar_impares(bitfield):
 		i+=1
 	return cagado
 #FIM cagar_impares
-def bit32_to_chr(bitfield):
-	pass
+def bit32_to_string(lista_bits):
+	string = ""
+	for elemento in lista_bits:
+		aux = bit32_to_int(elemento);
+		aux = chr(aux)
+		string+=aux
+	return string
 #FIM bit32_to_chr
 def string_to_bit32(checksum):
 	aux = checksum
 	lista_bits = []
 	for elemento in aux:
 		elemento = ord(elemento)
-		bitfield = int_to_bit32(elemento)
+		bitfield = int_to_bit(elemento)
 		lista_bits.append(bitfield)
 	return lista_bits
 def int_to_bit32(n):
@@ -177,16 +182,20 @@ def receber_dados():
 				bitfield_msg = int_to_bit32(data_loaded['msg']) #Passa o inteiro da mensagem para bitfield
 				vetor_bits_check = string_to_bit32(data_loaded['check']) #Passa o checksum para bitfield
 				#como usar o flip de pares
-				bitfield_msg = cagar_pares(bitfield_msg)
-				for bitfield in vetor_bits_check:
-					bitfield = cagar_pares(bitfield)
+				#bitfield_msg = cagar_pares(bitfield_msg)
+				#for bitfield in vetor_bits_check:
+					#bitfield = cagar_pares(bitfield)
 				#como usar o flip de impares
-				#vetor_bits = cagar_impares(vetor_bits)
+				#bitfield_msg = cagar_impares(bitfield_msg)
+				#for bitfield in vetor_bits_check:
+					#bitfield = cagar_impares(bitfield)
 				#como usar o de porcentagem aleatoria
 				#porcentagem = random.uniform(0,1)
-				#vetor_bits = cagar_paleatorio(vetor_bits,porcentagem)
-				print vetor_bits_check
+				#bitfield_msg = cagar_paleatorio(bitfield_msg,porcentagem)
+				#for bitfield in vetor_bits_check:
+					#bitfield = cagar_paleatorio(bitfield,0.3)
 				data_loaded['msg'] = bit32_to_int(bitfield_msg) #Passa o bitfield para inteiro
+				data_loaded['check'] = bit32_to_string(vetor_bits_check)
 				to_send.put(data_loaded)    # Coloca o dado recebido em uma fila sincrona de dados para serem enviados
 
 # FIM receber_dados
