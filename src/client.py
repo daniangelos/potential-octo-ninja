@@ -93,7 +93,23 @@ def receber():
         if data == b'':
             continue
         data_loaded = json.loads(data)
-        print "Recebido de: " + str(data_loaded['source']) + " : " + str(data_loaded['msg']) + " : " + str(data_loaded['check'])
+
+        # Deteccao de erros:
+        payload_recv = str(data_loaded['msg'])
+        check_recv = str(data_loaded['check'])
+        if(cript==0): #SHA1
+            check_sum = str(generate_sha1(payload_recv))
+        elif(cript==1): #MD5
+            check_sum = str(generate_md5(payload_recv))
+
+        if check_recv == check_sum:
+            print "Recebido de: " + str(data_loaded['source']) + \
+                " : " + str(data_loaded['msg']) + " : " + str(data_loaded['check'])
+        else:
+            print "Mensagem recebida com erro"
+
+
+
 
 # FIM receber()
 def enviar():
