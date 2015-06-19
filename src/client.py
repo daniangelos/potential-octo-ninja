@@ -12,6 +12,7 @@ import struct
 import time
 from modulo_assinatura import generate_md5
 from modulo_assinatura import generate_sha1
+from modulo_assinatura import generate_hamming
 
 num_clients = 0
 my_id = int()
@@ -95,16 +96,18 @@ def receber():
         data_loaded = json.loads(data)
 
         # Deteccao de erros:
-        payload_recv = str(data_loaded['msg'])
-        check_recv = str(data_loaded['check'])
+        payload_recv = data_loaded['msg']
+        check_recv = data_loaded['check']
         if(cript==0): #SHA1
-            check_sum = str(generate_sha1(payload_recv))
+            check_sum = generate_sha1(payload_recv)
         elif(cript==1): #MD5
-            check_sum = str(generate_md5(payload_recv))
+            check_sum = generate_md5(payload_recv)
+        elif(cript==2): #Hamming
+            check_sum = generate_hamming(payload_recv)
 
-        if check_recv == check_sum:
+        if check_recv == str(check_sum):
             print "Recebido de: " + str(data_loaded['source']) + \
-                " : " + str(data_loaded['msg']) + " : " + str(data_loaded['check'])
+            " : " + str(data_loaded['msg']) + " : " + ''.join(map(str,check_sum))
         else:
             print "Mensagem recebida com erro"
 
@@ -121,6 +124,8 @@ def enviar():
             check = str(generate_sha1(i))
         elif(cript==1):#MD5
             check = str(generate_md5(i))
+        elif(cript==2):#Hamming
+            check = str(generate_hamming(i))
         data = {'source': my_id, 'dest': destino, 'msg': i, 'check' : check}
         data_string = json.dumps(data) # serialize data para mandar por socket
         n = len(data_string)
