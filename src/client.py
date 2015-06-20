@@ -41,9 +41,13 @@ def main():
     parser = handle_usage()
     (options, args) = parser.parse_args()
 
-    if options.max <= 0:
+    if options.max == None or options._cript == None:
         print parser.usage
         return
+    else:
+        if options.max <= 0:
+            print parser.usage
+            return
 
     s.connect((host,port))
 
@@ -122,6 +126,7 @@ def enviar():
     global num_clients
     global destino
     i = 0
+    check = ""
     while True:
         if(cript==0):#SHA1
             check = str(generate_sha1(i))
@@ -134,7 +139,7 @@ def enviar():
         data = {'source': my_id, 'dest': destino, 'msg': i, 'check' : check}
         data_string = json.dumps(data) # serialize data para mandar por socket
         n = len(data_string)
-        
+
         sz_buf = struct.pack("@i", n)  # converte N em 4 bytes, para enviar pelo socket
 
         time.sleep(0.5)

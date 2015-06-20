@@ -4,8 +4,8 @@ import md5
 import sha
 import math
 def is_paridade(index):
-	lista = [1 if index==(2**t)-1 else 0 for t in range(0,6)] 
-	return 1 in lista 
+	lista = [1 if index==(2**t)-1 else 0 for t in range(0,6)]
+	return 1 in lista
 
 def junta(dados,hamming):
 	i=0
@@ -66,8 +66,8 @@ def generate_crc8(payload):
 	while(quociente[0:32] != so_zero):
 		x = i
 		for j in range(0, 9):
-			x2 = ord(quociente[x]) 
-			j2 = ord(polinomio[j]) 
+			x2 = ord(quociente[x])
+			j2 = ord(polinomio[j])
 			aux = (x2 ^ j2) + 48
 			quociente = quociente[:x] + chr(aux) + quociente[x+1:]
 
@@ -97,9 +97,9 @@ def main():
 	#print check
 	#check = generate_sha1(5)
 	#print check
-                check = generate_hamming(1)
-                print ''.join(map(str,check))
-		#generate_crc8(102)
+    check = generate_hamming(1)
+    print ''.join(map(str,check))
+    #generate_crc8(102)
 
 if __name__ == "__main__":
 	main()
