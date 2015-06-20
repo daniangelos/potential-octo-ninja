@@ -18,6 +18,7 @@ def junta(dados,hamming):
 		i+=1
 		j+=1
 	return hamming
+
 def get_list(binario):
 	index = 0
 	lista = []
@@ -26,6 +27,7 @@ def get_list(binario):
 			lista.append(2**index)
 		index+=1
 	return lista
+
 def generate_hamming(payload):
 	dados = payload
 	dados = bin(dados)[2:].zfill(32)
@@ -40,6 +42,31 @@ def generate_hamming(payload):
 				hamming[elemento-1] = hamming[elemento-1] ^ hamming[i]
 		i+=1
 	return hamming
+
+def generate_crc8(payload):
+	binario = bin(payload)[2:].zfill(32)
+	resto = "00000000"
+	quociente = binario + resto
+	# polinomio: x^8 + x^7 + x^4 + x^3 + x + 1
+	polinomio = "110011011"
+
+	i = 0
+	so_zero = bin(0)[2:].zfill(32)
+	while(quociente[0:32] != so_zero):
+		x = i
+		for j in range(0, 9):
+			x2 = ord(quociente[x]) 
+			j2 = ord(polinomio[j]) 
+			aux = (x2 ^ j2) + 48
+			quociente = quociente[:x] + chr(aux) + quociente[x+1:]
+
+			x+=1
+		while( (quociente[i] == '0') & (i < 32) ):
+			i+=1
+	resto = quociente[32:40]
+
+	return resto
+
 def generate_md5(payload):
 	aux = payload
 	m = md5.new()
@@ -59,8 +86,9 @@ def main():
 	#print check
 	#check = generate_sha1(5)
 	#print check
-		check = generate_hamming(10)
-		print ''.join(map(str,check))
+		#check = generate_hamming(10)
+		#print ''.join(map(str,check))
+		generate_crc8(102)
 
 if __name__ == "__main__":
 	main()
