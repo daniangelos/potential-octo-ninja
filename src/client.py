@@ -88,6 +88,9 @@ def main():
     if len(dest_list) > my_id:
         destino = dest_list[my_id]
         print destino
+    else:
+        print "Cliente não configurado!"
+        return
 
     thr1 = threading.Thread(target = receber)
     thr2 = threading.Thread(target = enviar)
