@@ -12,7 +12,7 @@
 
 A configuração é feita através de um arquivo no formato JSON, da seguinte maneira:
 
-{
+`{
     "server" : {
         "flip" : 0,
         "port" : 12345
@@ -22,7 +22,7 @@ A configuração é feita através de um arquivo no formato JSON, da seguinte ma
         "destinos" : [2,1,0],
         "server_port" : 12345
     }
-}
+}`
 
 Onde
 
