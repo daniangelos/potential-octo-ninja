@@ -2,7 +2,7 @@
 
 import md5
 import sha
-import sys
+import math
 def is_paridade(index):
 	lista = [1 if index==(2**t)-1 else 0 for t in range(0,6)] 
 	return 1 in lista 
@@ -31,7 +31,8 @@ def get_list(binario):
 def generate_hamming(payload):
 	dados = payload
 	dados = bin(dados)[2:].zfill(32)
-	hamming = 38*[0]##32 bits de dados + 6 bits de paridade
+        qtd_paridade = int(math.ceil(math.log(len(dados)+1,2)))
+	hamming = (qtd_paridade+len(dados))*[0]##32 bits de dados + 6 bits de paridade
 	hamming = junta(dados,hamming)
 	i=0
 	while(i<len(hamming)):
@@ -86,9 +87,9 @@ def main():
 	#print check
 	#check = generate_sha1(5)
 	#print check
-		#check = generate_hamming(10)
-		#print ''.join(map(str,check))
-		generate_crc8(102)
+                check = generate_hamming(10)
+                print ''.join(map(str,check))
+		#generate_crc8(102)
 
 if __name__ == "__main__":
 	main()
