@@ -30,8 +30,18 @@ def get_list(binario):
 
 def generate_hamming(payload):
 	dados = payload
-	dados = bin(dados)[2:].zfill(32)
-        qtd_paridade = int(math.ceil(math.log(len(dados)+1,2)))
+	dados = bin(dados)[2:]#.zfill(32)
+	if(len(dados)==1):
+		qtd_paridade = 2
+	elif(len(dados)>1 and len(dados)<5):
+		qtd_paridade = 3
+	elif(len(dados)>4 and len(dados)<12):
+		qtd_paridade = 4
+	elif(len(dados)>11 and len(dados)<27):
+		qtd_paridade = 5
+	elif(len(dados)>26 and len(dados)<58):
+		qtd_paridade = 6
+	#qtd_paridade = int(math.ceil(math.log(len(dados)+1,2)))
 	hamming = (qtd_paridade+len(dados))*[0]##32 bits de dados + 6 bits de paridade
 	hamming = junta(dados,hamming)
 	i=0
@@ -87,7 +97,7 @@ def main():
 	#print check
 	#check = generate_sha1(5)
 	#print check
-                check = generate_hamming(10)
+                check = generate_hamming(1)
                 print ''.join(map(str,check))
 		#generate_crc8(102)
 
