@@ -23,6 +23,17 @@ cript = int()
 s = socket.socket()
 host = socket.gethostname()
 port = 12345
+dest_list = []
+
+def read_config(filename):
+    file = open(filename, 'r')
+    config = json.load(file)
+    global cript
+    global port
+    global dest_list
+    cript = config["clients"]["algoritmo"]
+    port = config["clients"]["server_port"]
+    dest_list = list(config["clients"]["destinos"])
 
 def handle_usage():
     """ Função para gerenciar uso do programa e passagem do argumentos através da linha de comando.  """
@@ -32,6 +43,7 @@ def handle_usage():
     parser = optparse.OptionParser(usage)
     parser.add_option('-m', dest='max', type='int', help='Número máximo de clientes, deve ser maior que zero.')
     parser.add_option('-e', dest='_cript',type='int',help='Tipo de encriptacao.')
+    parser.add_option('-f', dest='filename',type='string',help='Nome do aquivo de configuração')
 
     return parser
 
@@ -41,13 +53,27 @@ def main():
     parser = handle_usage()
     (options, args) = parser.parse_args()
 
-    if options.max == None or options._cript == None:
+    #if options.max == None or options._cript == None:
+        #print parser.usage
+        #return
+    #else:
+        #if options.max <= 0:
+            #print parser.usage
+            #return
+
+
+    if options.filename == None:
         print parser.usage
         return
-    else:
-        if options.max <= 0:
-            print parser.usage
-            return
+
+    #global cript
+    #cript = options._cript
+
+    try:
+        read_config(options.filename)
+    except Exception as e:
+        print "Forneça um arquivo de configuração válido, em JSON"
+        return
 
     s.connect((host,port))
 
@@ -56,9 +82,16 @@ def main():
     my_id = struct.unpack("@i", data)[0]
 
     global destino
-    destino = randint(0, options.max - 1)
-    global cript
-    cript = options._cript
+    #destino = randint(0, options.max - 1)
+
+    print dest_list
+    if len(dest_list) > my_id:
+        destino = dest_list[my_id]
+        print destino
+    else:
+        print "Cliente não configurado!"
+        return
+
     thr1 = threading.Thread(target = receber)
     thr2 = threading.Thread(target = enviar)
 

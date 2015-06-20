@@ -29,6 +29,15 @@ s = socket.socket()
 host = socket.gethostname()
 port = 12345
 
+def read_config(filename):
+    file = open(filename, 'r')
+    config = json.load(file)
+    global flipar
+    global port
+    flipar = config["server"]["flip"]
+    port = config["server"]["port"]
+
+
 def handle_usage():
     """ Função para gerenciar uso do programa e passagem do argumentos através da linha de comando.  """
 
@@ -37,6 +46,7 @@ def handle_usage():
     parser = optparse.OptionParser(usage)
     # 0: nao flipar, 1: flipar aleatorio, 2: flipar pares, 3: flipar impares
     parser.add_option('-c', dest='_flipar',type='int',help='Tipo de flipagem')
+    parser.add_option('-f', dest='filename',type='string',help='Nome do aquivo de configuração')
 
     return parser
 
@@ -49,8 +59,18 @@ def main():
     #print parser.usage
     #return
 
-    global flipar
-    flipar = options._flipar
+    #global flipar
+    #flipar = options._flipar
+
+    if options.filename == None:
+        print parser.usage
+        return
+
+    try:
+        read_config(options.filename)
+    except Exception as e:
+        print "Forneça um arquivo de configuração válido, em JSON"
+        return
 
     thr1 = threading.Thread(target = esperar_clientes)
     thr2 = threading.Thread(target = receber_dados)
@@ -262,10 +282,16 @@ def receber_dados():
                     bitfield_msg = flipar_impares(bitfield_msg)
 
                 #Passa o bitfield para inteiro
+<<<<<<< HEAD
                 _mensagem = bitfield_msg[0:32]
                 _check = bitfield_msg[32:]
                 data_loaded['msg'] = bit32_to_int(_mensagem)
                 data_loaded['check'] = bit32_to_int(_check)
+=======
+                data_loaded['msg']
+                data_loaded['msg'] = bit32_to_int(bitfield_msg)
+                data_loaded['check'] = bit32_to_string(vetor_bits_check)
+>>>>>>> 2800b676547c243cb5e9201fb935b48c26bb853a
                 # Coloca o dado recebido em uma fila sincrona de dados para serem enviados
                 to_send.put(data_loaded)
                 # FIM receber_dados
