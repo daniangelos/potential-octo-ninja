@@ -3,6 +3,8 @@
 import md5
 import sha
 import math
+from server import bit32_to_int
+
 def is_paridade(index):
 	lista = [1 if index==(2**t)-1 else 0 for t in range(0,6)]
 	return 1 in lista
@@ -52,7 +54,7 @@ def generate_hamming(payload):
 			for elemento in lista:
 				hamming[elemento-1] = hamming[elemento-1] ^ hamming[i]
 		i+=1
-	return hamming
+	return bit32_to_int(hamming)
 
 def generate_crc8(payload):
 	binario = bin(payload)[2:].zfill(32)
@@ -76,20 +78,27 @@ def generate_crc8(payload):
 			i+=1
 	resto = quociente[32:40]
 
-	return resto
+        _resto = [] 
+        for c in resto:
+            _resto.append(int(c))
+            pass
+
+	return bit32_to_int(_resto)
 
 def generate_md5(payload):
 	aux = payload
 	m = md5.new()
 	m.update(str(aux))
-	return m.hexdigest()
+        x = m.hexdigest()
+	return int(x, 16)
 pass
 
 def generate_sha1(payload):
 	aux = payload
 	m = sha.new()
 	m.update(str(aux))
-	return m.hexdigest()
+        x = m.hexdigest()
+	return int(x, 16)
 pass
 
 def main():

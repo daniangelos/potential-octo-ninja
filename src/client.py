@@ -110,13 +110,15 @@ def receber():
         elif(cript==2): #Hamming
             check_sum = generate_hamming(payload_recv)
         elif(cript==3):#CRC-8
-			check_sum = generate_crc8(payload_recv)
+            check_sum = generate_crc8(payload_recv)
 
-        if check_recv == str(check_sum):
+        if check_recv == check_sum:
             print str(data_loaded['dest']) + "-> Recebido de: " + str(data_loaded['source']) + \
-            " : " + str(data_loaded['msg']) + " : " + ''.join(map(str,check_sum))
+            " : " + str(data_loaded['msg']) + " : " + str(check_sum)
+            pass
         else:
             print "Mensagem recebida com erro"
+            pass
 
 
 
@@ -129,13 +131,13 @@ def enviar():
     check = ""
     while True:
         if(cript==0):#SHA1
-            check = str(generate_sha1(i))
+            check = generate_sha1(i)
         elif(cript==1):#MD5
-            check = str(generate_md5(i))
+            check = generate_md5(i)
         elif(cript==2):#Hamming
-            check = str(generate_hamming(i))
+            check = generate_hamming(i)
         elif(cript==3):#CRC-8
-			check = str(generate_crc8(i))
+            check = generate_crc8(i)
         data = {'source': my_id, 'dest': destino, 'msg': i, 'check' : check}
         data_string = json.dumps(data) # serialize data para mandar por socket
         n = len(data_string)

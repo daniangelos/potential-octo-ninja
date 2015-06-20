@@ -96,7 +96,7 @@ def esperar_clientes():
 
 # FIM esperar_clientes
 def flip(bit):
-    return int(not bit)
+    return 1 if bit == 0 else 0
 
 def flipar_paleatorio(bitfield,porcentagem):
     flipado = bitfield
@@ -182,7 +182,23 @@ def extend(bitfield):
             extenso.insert(0,0)
             i+=1
         return extenso
+    return bitfield
 #FIM extend
+
+def tobits(s):
+    result = []
+    for c in s:
+        bits = bin(ord(c))[2:]
+        bits = '00000000'[len(bits):] + bits
+        result.extend([int(b) for b in bits])
+    return result
+
+def frombits(bits):
+    chars = []
+    for b in range(len(bits) / 8):
+        byte = bits[b*8:(b+1)*8]
+        chars.append(chr(int(''.join([str(bit) for bit in byte]), 2)))
+    return ''.join(chars)
 
 def receber_dados():
     global num_clients
@@ -227,30 +243,29 @@ def receber_dados():
                 if data == b'':
                     continue
                 data_loaded = json.loads(data) #De-serializa o data recebido
-                bitfield_msg = int_to_bit32(data_loaded['msg']) #Passa o inteiro da mensagem para bitfield
-                vetor_bits_check = string_to_bit32(data_loaded['check']) #Passa o checksum para bitfield
+                bitfield_msg = int_to_bit32(data_loaded['msg']) #passa o inteiro da mensagem para bitfield
+                # Passa o checksum pra bits:
+                vetor_bits_check = int_to_bit32(data_loaded['check'])
+                for bitfield in vetor_bits_check:
+                    bitfield_msg.append(bitfield)
+                    pass
+                #print vetor_bits_check
                 if flipar == 1:
                     #como usar o de porcentagem aleatoria
                     porcentagem = random.uniform(0,1)
                     bitfield_msg = flipar_paleatorio(bitfield_msg,porcentagem)
-                    for bitfield in vetor_bits_check:
-                        bitfield = flipar_paleatorio(bitfield,0.3)
                 elif flipar == 2:
                     #como usar o flip de pares
                     bitfield_msg = flipar_pares(bitfield_msg)
-                    for bitfield in vetor_bits_check:
-                        bitfield = flipar_pares(bitfield)
                 elif flipar == 3:
                     #como usar o flip de impares
                     bitfield_msg = flipar_impares(bitfield_msg)
-                    for bitfield in vetor_bits_check:
-                        bitfield = flipar_impares(bitfield)
 
                 #Passa o bitfield para inteiro
-                data_loaded['msg']
-                print bitfield_msg
-                data_loaded['msg'] = bit32_to_int(bitfield_msg)
-                data_loaded['check'] = bit32_to_string(vetor_bits_check)
+                _mensagem = bitfield_msg[0:32]
+                _check = bitfield_msg[32:]
+                data_loaded['msg'] = bit32_to_int(_mensagem)
+                data_loaded['check'] = bit32_to_int(_check)
                 # Coloca o dado recebido em uma fila sincrona de dados para serem enviados
                 to_send.put(data_loaded)
                 # FIM receber_dados
