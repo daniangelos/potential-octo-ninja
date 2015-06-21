@@ -78,10 +78,10 @@ def generate_crc8(payload):
 			i+=1
 	resto = quociente[32:40]
 
-        _resto = [] 
-        for c in resto:
-            _resto.append(int(c))
-            pass
+	_resto = [] 
+	for c in resto:
+		_resto.append(int(c))
+		pass
 
 	return bit32_to_int(_resto)
 

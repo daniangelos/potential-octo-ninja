@@ -112,6 +112,17 @@ def main():
 
 # FIM DA MAIN
 
+def bin_to_int(bitfield):
+    total = 0
+    i = 0
+    for number in (bitfield[::-1]):
+        if(number == '1'):
+            total += 2**i
+        i+=1
+    return total
+#FIM bit_to_int
+
+
 def receber():
     global my_id
     global s
@@ -144,13 +155,17 @@ def receber():
             check_sum = generate_hamming(payload_recv)
         elif(cript==3):#CRC-8
             check_sum = generate_crc8(payload_recv)
+            _recv =  bin(check_recv)[2:].zfill(32)
+            _recv = "000000000000000000000000" + _recv[24:]
+            check_recv = bin_to_int(_recv)
+            
 
         if check_recv == check_sum:
             print str(data_loaded['dest']) + "-> Recebido de: " + str(data_loaded['source']) + \
             " : " + str(data_loaded['msg']) + " : " + str(check_sum)
             pass
         else:
-            print "Mensagem recebida com erro"
+            print "Mensagem recebida com erro ", check_sum, " ", check_recv
             pass
 
 
@@ -177,7 +192,7 @@ def enviar():
 
         sz_buf = struct.pack("@i", n)  # converte N em 4 bytes, para enviar pelo socket
 
-        time.sleep(0.5)
+        time.sleep(0.01)
 
         try:
             s.send(sz_buf)
