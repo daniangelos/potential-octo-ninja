@@ -275,6 +275,8 @@ def receber_dados():
                 #Passa o bitfield para inteiro
                 _mensagem = bitfield_msg[0:32]
                 _check = bitfield_msg[32:]
+                print _check
+                
                 data_loaded['msg'] = bit32_to_int(_mensagem)
                 data_loaded['check'] = bit32_to_int(_check)
                 # Coloca o dado recebido em uma fila sincrona de dados para serem enviados
