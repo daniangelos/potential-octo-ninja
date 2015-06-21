@@ -41,8 +41,6 @@ def handle_usage():
     usage = '''Se vira.'''
 
     parser = optparse.OptionParser(usage)
-    parser.add_option('-m', dest='max', type='int', help='Número máximo de clientes, deve ser maior que zero.')
-    parser.add_option('-e', dest='_cript',type='int',help='Tipo de encriptacao.')
     parser.add_option('-f', dest='filename',type='string',help='Nome do aquivo de configuração')
 
     return parser
@@ -53,21 +51,9 @@ def main():
     parser = handle_usage()
     (options, args) = parser.parse_args()
 
-    #if options.max == None or options._cript == None:
-        #print parser.usage
-        #return
-    #else:
-        #if options.max <= 0:
-            #print parser.usage
-            #return
-
-
     if options.filename == None:
         print parser.usage
         return
-
-    #global cript
-    #cript = options._cript
 
     try:
         read_config(options.filename)
@@ -82,7 +68,6 @@ def main():
     my_id = struct.unpack("@i", data)[0]
 
     global destino
-    #destino = randint(0, options.max - 1)
 
     print dest_list
     if len(dest_list) > my_id:

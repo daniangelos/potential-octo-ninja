@@ -32,7 +32,7 @@ def get_list(binario):
 
 def generate_hamming(payload):
 	dados = payload
-	dados = bin(dados)[2:]#.zfill(32)
+	dados = bin(dados)[2:]
 	if(len(dados)==1):
 		qtd_paridade = 2
 	elif(len(dados)>1 and len(dados)<5):
@@ -44,7 +44,7 @@ def generate_hamming(payload):
 	elif(len(dados)>26 and len(dados)<58):
 		qtd_paridade = 6
 	#qtd_paridade = int(math.ceil(math.log(len(dados)+1,2)))
-	hamming = (qtd_paridade+len(dados))*[0]##32 bits de dados + 6 bits de paridade
+	hamming = (qtd_paridade+len(dados))*[0] #32 bits de dados + 6 bits de paridade
 	hamming = junta(dados,hamming)
 	i=0
 	while(i<len(hamming)):
@@ -72,13 +72,13 @@ def generate_crc8(payload):
 			j2 = ord(polinomio[j])
 			aux = (x2 ^ j2) + 48
 			quociente = quociente[:x] + chr(aux) + quociente[x+1:]
-
 			x+=1
+
 		while( (quociente[i] == '0') & (i < 32) ):
 			i+=1
 	resto = quociente[32:40]
 
-        _resto = [] 
+        _resto = []
         for c in resto:
             _resto.append(int(c))
             pass

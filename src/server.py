@@ -45,7 +45,6 @@ def handle_usage():
 
     parser = optparse.OptionParser(usage)
     # 0: nao flipar, 1: flipar aleatorio, 2: flipar pares, 3: flipar impares
-    parser.add_option('-c', dest='_flipar',type='int',help='Tipo de flipagem')
     parser.add_option('-f', dest='filename',type='string',help='Nome do aquivo de configuração')
 
     return parser
@@ -54,13 +53,6 @@ def main():
     # Recebe os argumentos por linha de comando
     parser = handle_usage()
     (options, args) = parser.parse_args()
-
-    #if options.max <= 0:
-    #print parser.usage
-    #return
-
-    #global flipar
-    #flipar = options._flipar
 
     if options.filename == None:
         print parser.usage
@@ -236,7 +228,6 @@ def receber_dados():
                 try:
                     sz_buf = com.recv(4)
                 except socket.error:
-                    #client_pair[0] = False
                     mutex.acquire()
                     client_list[i] = (False, com)
                     mutex.release()

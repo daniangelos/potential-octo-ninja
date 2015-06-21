@@ -43,3 +43,15 @@ Onde
  - 3 = CRC
 
 * As partes "server" e clients são independentes e utilizadas somente pelo respectivo programa.
+
+## Execução
+
+O cliente deve ser executado da seguinte maneira:
+
+`./client.py -f config_file.json`
+
+O servidor deve ser executado da seguinte maneira:
+
+`./servidor.py -f config_file.json`
+
+Onde config\_file.json é o arquivo de configuração, como especificado acima.
