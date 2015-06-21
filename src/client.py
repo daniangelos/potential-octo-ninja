@@ -14,6 +14,7 @@ from modulo_assinatura import generate_md5
 from modulo_assinatura import generate_sha1
 from modulo_assinatura import generate_hamming
 from modulo_assinatura import generate_crc8
+from modulo_assinatura import disjunta
 
 num_clients = 0
 my_id = int()
@@ -137,7 +138,12 @@ def receber():
         elif(cript==1): #MD5
             check_sum = generate_md5(payload_recv)
         elif(cript==2): #Hamming
-            check_sum = generate_hamming(payload_recv)
+            _recv =  bin(check_recv)[2:].zfill(38)
+            #print _recv
+            dado_bin = disjunta(_recv)
+            dado_int = bin_to_int(dado_bin)
+            check_sum = generate_hamming(dado_int)
+            #check_sum = generate_hamming(payload_recv)
         elif(cript==3):#CRC-8
             check_sum = generate_crc8(payload_recv)
             _recv =  bin(check_recv)[2:].zfill(32)
@@ -177,7 +183,7 @@ def enviar():
 
         sz_buf = struct.pack("@i", n)  # converte N em 4 bytes, para enviar pelo socket
 
-        time.sleep(0.01)
+        time.sleep(1)
 
         try:
             s.send(sz_buf)

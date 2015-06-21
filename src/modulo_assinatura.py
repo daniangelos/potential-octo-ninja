@@ -9,6 +9,20 @@ def is_paridade(index):
 	lista = [1 if index==(2**t)-1 else 0 for t in range(0,6)]
 	return 1 in lista
 
+def disjunta(check):
+	i=0
+	j=0
+	dado = bin(0)[2:].zfill(32)
+
+	while(i<len(check)):
+		if(is_paridade(i)):
+			i+=1
+			continue
+		dado = dado[:j] + check[i] + dado[j+1:]
+		i+=1
+		j+=1
+	return dado
+
 def junta(dados,hamming):
 	i=0
 	j=0
@@ -32,7 +46,24 @@ def get_list(binario):
 
 def generate_hamming(payload):
 	dados = payload
-	dados = bin(dados)[2:]
+	dados = bin(dados)[2:].zfill(32)
+	qtd_paridade = 6
+	#qtd_paridade = int(math.ceil(math.log(len(dados)+1,2)))
+	hamming = (qtd_paridade+len(dados))*[0]##32 bits de dados + 6 bits de paridade
+	hamming = junta(dados,hamming)
+	i=0
+	while(i<len(hamming)):
+		if(not is_paridade(i)):
+			binario = bin(i+1)[2:].zfill(32)
+			lista = get_list(binario)
+			for elemento in lista:
+				hamming[elemento-1] = hamming[elemento-1] ^ hamming[i]
+		i+=1
+	return bit32_to_int(hamming)
+
+def generate_hamming2(payload):
+	dados = payload
+	dados = bin(dados)[2:]#.zfill(32)
 	if(len(dados)==1):
 		qtd_paridade = 2
 	elif(len(dados)>1 and len(dados)<5):
@@ -86,20 +117,28 @@ def generate_crc8(payload):
 	return bit32_to_int(_resto)
 
 def generate_md5(payload):
-	aux = payload
-	m = md5.new()
-	m.update(str(aux))
+    aux = payload
+    m = md5.new()
+    m.update(str(aux))
     x = m.hexdigest()
-	return int(x, 16)
-pass
+    return int(x, 16)
 
 def generate_sha1(payload):
-	aux = payload
-	m = sha.new()
-	m.update(str(aux))
-        x = m.hexdigest()
-	return int(x, 16)
-pass
+    aux = payload
+    m = sha.new()
+    m.update(str(aux))
+    x = m.hexdigest()
+    return int(x, 16)
+
+def bin_to_int(bitfield):
+    total = 0
+    i = 0
+    for number in (bitfield[::-1]):
+        if(number == '1'):
+            total += 2**i
+        i+=1
+    return total
+#FIM bit_to_int
 
 def main():
 	#check = generate_md5(5)
@@ -107,7 +146,12 @@ def main():
 	#check = generate_sha1(5)
 	#print check
     check = generate_hamming(1)
-    print ''.join(map(str,check))
+    print check
+    binario = bin(check)[2:].zfill(38)
+    print binario
+    #print ''.join(map(str,check))
+    res = disjunta(binario)
+    print bin_to_int(res)
     #generate_crc8(102)
 
 if __name__ == "__main__":
