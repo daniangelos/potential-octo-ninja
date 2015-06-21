@@ -6,11 +6,6 @@
 * Guilherme Branco
 * Lucas Amaral
 * Pedro Henrique Lima
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 2800b676547c243cb5e9201fb935b48c26bb853a
 
 ## Arquivo de configuração
 
@@ -48,7 +43,3 @@ Onde
  - 3 = CRC
 
 * As partes "server" e clients são independentes e utilizadas somente pelo respectivo programa.
-<<<<<<< HEAD
->>>>>>> 2800b67... Arrumando README de novo
-=======
->>>>>>> 2800b676547c243cb5e9201fb935b48c26bb853a
