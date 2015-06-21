@@ -187,7 +187,6 @@ def int_to_bit(n):
 def bit32_to_int(bitfield):
     total = 0
     i = 0
-    print (bitfield)
     for number in reversed(bitfield):
         if(number == 1):
             total += 2**i
@@ -287,9 +286,6 @@ def receber_dados():
                 _check = bitfield_msg[32:]
                 data_loaded['msg'] = bit32_to_int(_mensagem)
                 data_loaded['check'] = bit32_to_int(_check)
-                data_loaded['msg']
-                data_loaded['msg'] = bit32_to_int(bitfield_msg)
-                data_loaded['check'] = bit32_to_string(vetor_bits_check)
                 # Coloca o dado recebido em uma fila sincrona de dados para serem enviados
                 to_send.put(data_loaded)
                 # FIM receber_dados
