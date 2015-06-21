@@ -1,6 +1,6 @@
 {
     "server" : {
-        "flip" : 2,
+        "flip" : 1,
         "port" : 12345
     },
     "clients" : {
